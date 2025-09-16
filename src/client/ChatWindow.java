@@ -2,6 +2,8 @@ package client;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.net.*;
 import java.util.List;
@@ -52,12 +54,43 @@ public class ChatWindow extends JFrame {
                 txtMessage.setText("");
             }
         });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                closeConnection();
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeConnection();
+            }
+        });
     }
 
     private void loadHistory() {
         List<String> history = messageDAO.getConversation(user, target);
         for (String line : history) {
             chatArea.append(line + "\n");
+        }
+    }
+
+    public void appendIncomingMessage(String sender, String message) {
+        chatArea.append(sender + ": " + message + "\n");
+        messageDAO.saveMessage(sender, user, message);
+    }
+
+    private void closeConnection() {
+        if (pw != null) {
+            pw.close();
+            pw = null;
+        }
+        if (socket != null && !socket.isClosed()) {
+            try {
+                socket.close();
+            } catch (IOException ignored) {
+            }
+            socket = null;
         }
     }
 }
