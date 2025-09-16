@@ -5,8 +5,8 @@ import java.net.*;
 import java.util.Scanner;
 
 public class ChatPeer {
-    public static void startChat(String user, String target) {
-        try (Socket peer = new Socket("localhost", 6000);
+    public static void startChat(String user, String target, String host, int port) {
+        try (Socket peer = new Socket(host, port);
              PrintWriter pw = new PrintWriter(peer.getOutputStream(), true)) {
             Scanner sc = new Scanner(System.in);
             System.out.println("Chat với " + target + " (gõ /exit để thoát)");
